@@ -111,6 +111,56 @@ button {
   gap: 12px;
 }
 
+.format-sample {
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #fcfeff;
+}
+
+.format-sample h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.format-sample pre {
+  font-size: 0.95rem;
+}
+
+.assistant-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.assistant-row input {
+  flex: 1;
+}
+
+.assistant-output {
+  margin-top: -2px;
+  margin-bottom: 4px;
+}
+
+.assistant-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  background: #f6fbff;
+}
+
+.assistant-title,
+.assistant-subtitle {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.assistant-card ul {
+  margin: 6px 0 0 18px;
+  padding: 0;
+}
+
 label {
   display: grid;
   gap: 6px;
@@ -180,6 +230,48 @@ th {
   background: #f8fbff;
   border: 1px solid var(--border);
   border-radius: 12px;
+}
+
+.report-preview {
+  font-size: 0.95rem;
+  color: #2b3b4f;
+}
+
+.report-sheet {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  background: white;
+}
+
+.report-sheet h4 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.report-sheet .header-line {
+  border-bottom: 2px solid var(--text);
+  margin: 6px 0 12px;
+}
+
+.report-sheet .section {
+  margin-bottom: 12px;
+}
+
+.report-sheet .row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.report-sheet .label {
+  font-weight: 700;
+}
+
+.report-sheet table {
+  margin-top: 8px;
 }
 
 pre {

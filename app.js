@@ -2,9 +2,63 @@ const form = document.getElementById('analysisForm');
 const csvUpload = document.getElementById('csvUpload');
 const generateBtn = document.getElementById('generateReport');
 const loadSampleBtn = document.getElementById('loadSample');
+const showFormatSampleBtn = document.getElementById('showFormatSample');
+const suggestValuesBtn = document.getElementById('suggestValues');
 const resultsBody = document.querySelector('#resultsTable tbody');
 const summaryCards = document.getElementById('summaryCards');
 const reportPreview = document.getElementById('reportPreview');
+const assistantOutput = document.getElementById('assistantOutput');
+
+const knowledgeBase = [
+  {
+    id: 'concrete',
+    keywords: ['cement concrete', 'concrete 1:2:4', 'cc 1:2:4'],
+    itemName: 'Cement concrete 1:2:4 (20 mm aggregate)',
+    unit: 'm3',
+    boqRate: 18000,
+    marketRate: 17200,
+    lmcCoefficient: 1.04,
+    bsrCoefficient: 1.08,
+    remarks: 'Suggested from current local concrete mix market rates.',
+    components: ['Cement', 'Sand', '20 mm aggregate', 'Water', 'Labour and mixing']
+  },
+  {
+    id: 'masonry',
+    keywords: ['masonry', 'brick masonry', 'stone masonry'],
+    itemName: 'Masonry work in cement mortar 1:4',
+    unit: 'm3',
+    boqRate: 16500,
+    marketRate: 15850,
+    lmcCoefficient: 1.03,
+    bsrCoefficient: 1.06,
+    remarks: 'Suggested from current brickwork and mortar market pricing.',
+    components: ['Bricks', 'Cement mortar', 'Labour', 'Scaffolding']
+  },
+  {
+    id: 'plaster',
+    keywords: ['plaster', 'internal plaster', 'external plaster'],
+    itemName: 'Plastering in cement mortar 1:4',
+    unit: 'm2',
+    boqRate: 980,
+    marketRate: 940,
+    lmcCoefficient: 1.02,
+    bsrCoefficient: 1.05,
+    remarks: 'Suggested from current plastering supply and labour cost.',
+    components: ['Cement', 'Sand', 'Labour', 'Waterproofing additives']
+  },
+  {
+    id: 'steel',
+    keywords: ['reinforcement', 'steel', 'rebar'],
+    itemName: 'Reinforcement steel bar',
+    unit: 'kg',
+    boqRate: 95,
+    marketRate: 88,
+    lmcCoefficient: 1.01,
+    bsrCoefficient: 1.04,
+    remarks: 'Suggested from latest steel bar market quotations.',
+    components: ['Steel bars', 'Binding wire', 'Cutting and bending']
+  }
+];
 
 const sampleData = {
   itemName: 'Cement concrete 1:2:4 (20 mm aggregate)',
@@ -31,6 +85,10 @@ function readFormValues() {
   };
 }
 
+function normalizeText(value) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
 function populateForm(data) {
   document.getElementById('itemName').value = data.itemName || '';
   document.getElementById('unit').value = data.unit || '';
@@ -40,6 +98,86 @@ function populateForm(data) {
   document.getElementById('lmcCoefficient').value = data.lmcCoefficient || '';
   document.getElementById('bsrCoefficient').value = data.bsrCoefficient || '';
   document.getElementById('remarks').value = data.remarks || '';
+}
+
+function getSuggestion(description) {
+  const normalizedDescription = normalizeText(description || '');
+
+  if (!normalizedDescription) {
+    return {
+      ...sampleData,
+      matched: false,
+      confidence: 0,
+      reason: 'Please enter an item description to get an AI-style suggestion.'
+    };
+  }
+
+  let bestMatch = null;
+  let highestScore = 0;
+
+  knowledgeBase.forEach((entry) => {
+    const score = entry.keywords.reduce((total, keyword) => {
+      return total + (normalizeText(keyword).includes(normalizedDescription) || normalizedDescription.includes(normalizeText(keyword)) ? 2 : 0);
+    }, 0);
+
+    if (score > highestScore) {
+      highestScore = score;
+      bestMatch = entry;
+    }
+  });
+
+  if (bestMatch && highestScore > 0) {
+    return {
+      ...bestMatch,
+      matched: true,
+      confidence: Math.min(0.98, 0.7 + highestScore * 0.08),
+      reason: `Matched to a known BOQ item pattern using keywords such as ${bestMatch.keywords.join(', ')}.`
+    };
+  }
+
+  return {
+    itemName: description,
+    unit: 'm3',
+    quantity: 1,
+    boqRate: 12000,
+    marketRate: 11000,
+    lmcCoefficient: 1.03,
+    bsrCoefficient: 1.06,
+    remarks: 'No exact match found. Estimated from standard tender assumptions.',
+    matched: false,
+    confidence: 0.45,
+    reason: 'A generic estimate was prepared from standard tender assumptions.',
+    components: ['Material', 'Labour', 'Transport']
+  };
+}
+
+function renderAssistantOutput(suggestion) {
+  const componentsHtml = (suggestion.components || []).map((component) => `<li>${component}</li>`).join('');
+  assistantOutput.innerHTML = `
+    <div class="assistant-card">
+      <div class="assistant-title">AI-style suggestion</div>
+      <p><strong>${suggestion.itemName || 'Item'}</strong></p>
+      <p>${suggestion.reason || ''}</p>
+      <ul>
+        <li>Suggested unit: ${suggestion.unit || 'n/a'}</li>
+        <li>Latest market rate: ${formatNumber(suggestion.marketRate || 0)}</li>
+        <li>LMC 2026 coefficient: ${suggestion.lmcCoefficient || 0}</li>
+        <li>BSR 2026 coefficient: ${suggestion.bsrCoefficient || 0}</li>
+      </ul>
+      <div class="assistant-subtitle">Suggested components</div>
+      <ul>${componentsHtml}</ul>
+    </div>
+  `;
+}
+
+function applySuggestion() {
+  const suggestion = getSuggestion(document.getElementById('itemName').value);
+  populateForm({
+    ...suggestion,
+    quantity: suggestion.quantity || 1
+  });
+  renderAssistantOutput(suggestion);
+  generateReport();
 }
 
 function calculateRow(item) {
@@ -102,26 +240,50 @@ function renderReport(rows) {
     resultsBody.appendChild(tr);
   });
 
-  const preview = rows.map((row, index) => {
-    return [
-      `Item ${index + 1}`,
-      `Description: ${row.itemName}`,
-      `Unit: ${row.unit}`,
-      `Quantity: ${formatNumber(row.quantity)}`,
-      `BOQ Rate: ${formatNumber(row.boqRate)}`,
-      `Latest Market Rate: ${formatNumber(row.marketRate)}`,
-      `LMC 2026 Coefficient: ${row.lmcCoefficient}`,
-      `BSR 2026 Coefficient: ${row.bsrCoefficient}`,
-      `LMC 2026 Rate: ${formatNumber(row.lmcRate)}`,
-      `BSR 2026 Rate: ${formatNumber(row.bsrRate)}`,
-      `Recommended Rate: ${formatNumber(row.recommendedRate)}`,
-      `Amount: ${formatNumber(row.amount)}`,
-      `Remarks: ${row.remarks || 'N/A'}`,
-      ''
-    ].join('\n');
-  }).join('\n');
+  const previewHtml = rows.map((row, index) => {
+    const componentsText = (row.components || []).join(' | ');
+    return `
+      <div class="report-sheet">
+        <h4>BSR Rate Analysis Sheet</h4>
+        <div class="header-line"></div>
+        <div class="section">
+          <div class="row"><span class="label">Item No.</span><span>${index + 1}</span></div>
+          <div class="row"><span class="label">Description of Work</span><span>${row.itemName}</span></div>
+          <div class="row"><span class="label">Unit</span><span>${row.unit}</span></div>
+          <div class="row"><span class="label">Quantity</span><span>${formatNumber(row.quantity)}</span></div>
+        </div>
+        <div class="section">
+          <div class="row"><span class="label">BOQ Rate</span><span>${formatNumber(row.boqRate)}</span></div>
+          <div class="row"><span class="label">Latest Market Rate</span><span>${formatNumber(row.marketRate)}</span></div>
+          <div class="row"><span class="label">LMC 2026 Coefficient</span><span>${row.lmcCoefficient}</span></div>
+          <div class="row"><span class="label">BSR 2026 Coefficient</span><span>${row.bsrCoefficient}</span></div>
+        </div>
+        <div class="section">
+          <div class="row"><span class="label">LMC 2026 Rate</span><span>${formatNumber(row.lmcRate)}</span></div>
+          <div class="row"><span class="label">BSR 2026 Rate</span><span>${formatNumber(row.bsrRate)}</span></div>
+          <div class="row"><span class="label">Recommended Rate</span><span>${formatNumber(row.recommendedRate)}</span></div>
+          <div class="row"><span class="label">Amount</span><span>${formatNumber(row.amount)}</span></div>
+        </div>
+        <div class="section">
+          <div class="row"><span class="label">Suggested Components</span><span>${componentsText || 'N/A'}</span></div>
+          <div class="row"><span class="label">Remarks</span><span>${row.remarks || 'N/A'}</span></div>
+        </div>
+      </div>
+    `;
+  }).join('');
 
-  reportPreview.textContent = `BHUTAN TENDER RATE ANALYSIS\n===========================\n\n${preview}`;
+  reportPreview.innerHTML = `
+    <div class="report-sheet">
+      <h4>Bhutan Tender Rate Analysis</h4>
+      <div class="header-line"></div>
+      <div class="section">
+        <div class="row"><span class="label">Items Analysed</span><span>${rows.length}</span></div>
+        <div class="row"><span class="label">Average Recommended Rate</span><span>${formatNumber(averageRecommended)}</span></div>
+        <div class="row"><span class="label">Total Amount</span><span>${formatNumber(totalAmount)}</span></div>
+      </div>
+    </div>
+    ${previewHtml}
+  `;
 }
 
 function generateReport() {
@@ -180,7 +342,18 @@ form.addEventListener('input', () => {
 });
 
 generateBtn.addEventListener('click', generateReport);
-loadSampleBtn.addEventListener('click', () => populateForm(sampleData));
+suggestValuesBtn.addEventListener('click', applySuggestion);
+showFormatSampleBtn.addEventListener('click', () => {
+  populateForm(sampleData);
+  renderAssistantOutput(sampleData);
+  generateReport();
+  document.getElementById('formatSample').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+loadSampleBtn.addEventListener('click', () => {
+  populateForm(sampleData);
+  renderAssistantOutput(sampleData);
+  generateReport();
+});
 csvUpload.addEventListener('change', (event) => {
   const [file] = event.target.files;
   if (file) {
@@ -189,4 +362,5 @@ csvUpload.addEventListener('change', (event) => {
 });
 
 populateForm(sampleData);
+renderAssistantOutput(sampleData);
 generateReport();

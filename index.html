@@ -31,14 +31,36 @@
             <input id="csvUpload" type="file" accept=".csv" />
           </label>
           <button id="loadSample" class="secondary-btn" type="button">Load sample</button>
+          <button id="showFormatSample" class="secondary-btn" type="button">Show format sample</button>
           <button id="generateReport" type="button">Generate report</button>
+        </div>
+
+        <div id="formatSample" class="format-sample">
+          <h3>Sample rate analysis format</h3>
+          <pre>Item: Cement concrete 1:2:4 (20 mm aggregate)
+Unit: m3
+Quantity: 12.50
+BOQ Rate: 18,000.00
+Latest Market Rate: 17,200.00
+LMC 2026 Coefficient: 1.04
+BSR 2026 Coefficient: 1.08
+LMC 2026 Rate: 17,888.00
+BSR 2026 Rate: 18,576.00
+Recommended Rate: 18,232.00
+Amount: 227,900.00
+Remarks: Market quote checked with local supplier and transport cost.</pre>
         </div>
 
         <form id="analysisForm" class="analysis-form">
           <label>
             Item description
-            <input id="itemName" name="itemName" required />
+            <div class="assistant-row">
+              <input id="itemName" name="itemName" required />
+              <button id="suggestValues" class="secondary-btn" type="button">Suggest values</button>
+            </div>
           </label>
+
+          <div id="assistantOutput" class="assistant-output" aria-live="polite"></div>
 
           <div class="inline-fields">
             <label>
@@ -109,7 +131,7 @@
 
         <div class="report-box">
           <h3>Report preview</h3>
-          <pre id="reportPreview"></pre>
+          <div id="reportPreview" class="report-preview"></div>
         </div>
       </section>
     </main>
