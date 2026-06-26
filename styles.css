@@ -1,12 +1,13 @@
 :root {
   color-scheme: light;
-  --bg: #f4f7fb;
+  --bg: #eef4f8;
   --panel: #ffffff;
-  --text: #14213d;
+  --text: #122033;
   --muted: #5f6b7a;
-  --accent: #0f6cbd;
-  --accent-2: #1b9c85;
-  --border: #dce5ef;
+  --accent: #0b5ea8;
+  --accent-2: #138a72;
+  --border: #d9e2eb;
+  --shadow: 0 14px 40px rgba(18, 32, 51, 0.08);
 }
 
 * {
@@ -15,21 +16,22 @@
 
 body {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: var(--bg);
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(180deg, #f7fafc 0%, var(--bg) 100%);
   color: var(--text);
   line-height: 1.5;
 }
 
 .hero {
-  background: linear-gradient(135deg, #0f6cbd, #1b9c85);
+  background: linear-gradient(135deg, #0c4f8a 0%, #1a7f6b 100%);
   color: white;
-  padding: 32px 24px;
+  padding: 40px 28px;
 }
 
 .hero h1 {
   margin: 0 0 8px;
-  font-size: 2rem;
+  font-size: 2.2rem;
+  font-weight: 700;
 }
 
 .subtitle {
@@ -56,9 +58,9 @@ body {
 .panel {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(20, 33, 61, 0.06);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: var(--shadow);
 }
 
 .panel-heading h2 {
@@ -98,12 +100,14 @@ button {
   background: var(--accent);
   color: white;
   border: none;
+  box-shadow: 0 8px 18px rgba(11, 94, 168, 0.16);
 }
 
 .secondary-btn {
-  background: #eef4fb;
+  background: #f3f7fb;
   color: var(--text);
   border: 1px solid var(--border);
+  box-shadow: none;
 }
 
 .analysis-form {
@@ -192,9 +196,9 @@ textarea {
 
 .summary-card {
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px;
-  background: #fcfeff;
+  border-radius: 14px;
+  padding: 14px;
+  background: linear-gradient(135deg, #fbfdff 0%, #f3f8fc 100%);
 }
 
 .summary-card strong {
@@ -239,9 +243,10 @@ th {
 
 .report-sheet {
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px;
+  border-radius: 14px;
+  padding: 16px;
   background: white;
+  margin-bottom: 12px;
 }
 
 .report-sheet h4 {
@@ -262,7 +267,7 @@ th {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  padding: 4px 0;
+  padding: 6px 0;
   border-bottom: 1px dashed var(--border);
 }
 
