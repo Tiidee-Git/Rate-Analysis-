@@ -247,26 +247,29 @@ function renderReport(rows) {
         <h4>BSR Rate Analysis Sheet</h4>
         <div class="header-line"></div>
         <div class="section">
-          <div class="row"><span class="label">Item No.</span><span>${index + 1}</span></div>
-          <div class="row"><span class="label">Description of Work</span><span>${row.itemName}</span></div>
-          <div class="row"><span class="label">Unit</span><span>${row.unit}</span></div>
-          <div class="row"><span class="label">Quantity</span><span>${formatNumber(row.quantity)}</span></div>
+          <div class="section-title">Description of Work</div>
+          <div class="row"><span class="label">Item No.</span><span class="value">${index + 1}</span></div>
+          <div class="row"><span class="label">Description</span><span class="value">${row.itemName}</span></div>
+          <div class="row"><span class="label">Unit</span><span class="value">${row.unit}</span></div>
+          <div class="row"><span class="label">Quantity</span><span class="value">${formatNumber(row.quantity)}</span></div>
         </div>
         <div class="section">
-          <div class="row"><span class="label">BOQ Rate</span><span>${formatNumber(row.boqRate)}</span></div>
-          <div class="row"><span class="label">Latest Market Rate</span><span>${formatNumber(row.marketRate)}</span></div>
-          <div class="row"><span class="label">LMC 2026 Coefficient</span><span>${row.lmcCoefficient}</span></div>
-          <div class="row"><span class="label">BSR 2026 Coefficient</span><span>${row.bsrCoefficient}</span></div>
+          <div class="section-title">Rate Analysis</div>
+          <div class="row"><span class="label">BOQ Rate</span><span class="value">${formatNumber(row.boqRate)}</span></div>
+          <div class="row"><span class="label">Latest Market Rate</span><span class="value">${formatNumber(row.marketRate)}</span></div>
+          <div class="row"><span class="label">LMC 2026 Coefficient</span><span class="value">${row.lmcCoefficient}</span></div>
+          <div class="row"><span class="label">BSR 2026 Coefficient</span><span class="value">${row.bsrCoefficient}</span></div>
         </div>
         <div class="section">
-          <div class="row"><span class="label">LMC 2026 Rate</span><span>${formatNumber(row.lmcRate)}</span></div>
-          <div class="row"><span class="label">BSR 2026 Rate</span><span>${formatNumber(row.bsrRate)}</span></div>
-          <div class="row"><span class="label">Recommended Rate</span><span>${formatNumber(row.recommendedRate)}</span></div>
-          <div class="row"><span class="label">Amount</span><span>${formatNumber(row.amount)}</span></div>
+          <div class="row"><span class="label">LMC 2026 Rate</span><span class="value">${formatNumber(row.lmcRate)}</span></div>
+          <div class="row"><span class="label">BSR 2026 Rate</span><span class="value">${formatNumber(row.bsrRate)}</span></div>
+          <div class="row"><span class="label">Recommended Rate</span><span class="value">${formatNumber(row.recommendedRate)}</span></div>
+          <div class="row"><span class="label">Amount</span><span class="value">${formatNumber(row.amount)}</span></div>
         </div>
         <div class="section">
-          <div class="row"><span class="label">Suggested Components</span><span>${componentsText || 'N/A'}</span></div>
-          <div class="row"><span class="label">Remarks</span><span>${row.remarks || 'N/A'}</span></div>
+          <div class="section-title">Remarks</div>
+          <div class="row"><span class="label">Suggested Components</span><span class="value">${componentsText || 'N/A'}</span></div>
+          <div class="row"><span class="label">Remarks</span><span class="value">${row.remarks || 'N/A'}</span></div>
         </div>
       </div>
     `;
@@ -277,9 +280,10 @@ function renderReport(rows) {
       <h4>Bhutan Tender Rate Analysis</h4>
       <div class="header-line"></div>
       <div class="section">
-        <div class="row"><span class="label">Items Analysed</span><span>${rows.length}</span></div>
-        <div class="row"><span class="label">Average Recommended Rate</span><span>${formatNumber(averageRecommended)}</span></div>
-        <div class="row"><span class="label">Total Amount</span><span>${formatNumber(totalAmount)}</span></div>
+        <div class="section-title">Summary</div>
+        <div class="row"><span class="label">Items Analysed</span><span class="value">${rows.length}</span></div>
+        <div class="row"><span class="label">Average Recommended Rate</span><span class="value">${formatNumber(averageRecommended)}</span></div>
+        <div class="row"><span class="label">Total Amount</span><span class="value">${formatNumber(totalAmount)}</span></div>
       </div>
     </div>
     ${previewHtml}

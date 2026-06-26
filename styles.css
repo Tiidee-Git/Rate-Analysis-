@@ -252,6 +252,8 @@ th {
 .report-sheet h4 {
   margin: 0 0 8px;
   font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .report-sheet .header-line {
@@ -260,12 +262,18 @@ th {
 }
 
 .report-sheet .section {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+}
+
+.report-sheet .section-title {
+  font-weight: 700;
+  margin: 6px 0 4px;
+  color: var(--accent);
 }
 
 .report-sheet .row {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(170px, 1.2fr) 1fr;
   gap: 12px;
   padding: 6px 0;
   border-bottom: 1px dashed var(--border);
@@ -273,6 +281,11 @@ th {
 
 .report-sheet .label {
   font-weight: 700;
+}
+
+.report-sheet .value {
+  text-align: right;
+  font-weight: 600;
 }
 
 .report-sheet table {
